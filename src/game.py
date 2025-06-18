@@ -1,7 +1,7 @@
-import pygame
+import pygame #type: ignore
 from board import *
 from const import *
-from dragger import Dragger
+from dragger import *
 
 class Game:
     def __init__(self):
@@ -24,7 +24,22 @@ class Game:
                 if self.board.squares[row][col].has_piece():
                     piece = self.board.squares[row][col].piece
                     
-                    img = pygame.image.load(piece.texture)
-                    img_center = col * SQSIZE + SQSIZE // 2, row * SQSIZE + SQSIZE // 2
-                    piece.texture_rect = img.get_rect(center=img_center)
-                    surface.blit(img, piece.texture_rect)
+                    #all pieces except dragger piece
+                    if piece != self.dragger.piece:
+                        piece.set_texture(size=80)
+                        img = pygame.image.load(piece.texture)
+                        img_center = col * SQSIZE + SQSIZE // 2, row * SQSIZE + SQSIZE // 2
+                        piece.texture_rect = img.get_rect(center=img_center)
+                        surface.blit(img, piece.texture_rect)
+
+    def show_moves(self, surface):
+        if self.dragger.dragging:
+            piece = self.dragger.piece
+
+            for move in piece.moves:
+                #color
+                color = '#C86464' if (move.final.row + move.final.col) % 2 == 0 else '#C84864'
+                #rectangle
+                rect = (move.final.col * SQSIZE, move.final.row * SQSIZE, SQSIZE, SQSIZE)
+                #blit
+                pygame.draw.rect(surface, color, rect)
