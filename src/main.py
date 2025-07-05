@@ -1,8 +1,10 @@
-import pygame #type: ignore
+import pygame
 import sys
 from const import *
 from game import *
 from dragger import *
+from move import Move
+from square import Square
 
 class Main:
     def __init__(self):
@@ -59,7 +61,27 @@ class Main:
 
                 #CLICK RELEASE
                 elif event.type == pygame.MOUSEBUTTONUP:
+                    if dragger.dragging:
+                        dragger.update_mouse(event.pos)
+                        released_row = dragger.mouseY // SQSIZE
+                        released_col = dragger.mouseX // SQSIZE
+
+                        # CREATE POSSIBLE MOVE
+                        initial = Square(dragger.initial_row, dragger.initial_col)
+                        final = Square(released_row, released_col)
+                        
+                        move = Move(initial, final)
+
+                        #valid move
+                        if board.valid_move(dragger.piece, move):
+                            board.move(dragger.piece, move)
+                            #show methods
+                            game.show_bg(screen)
+                            game.show_pieces(screen)
+
                     dragger.undrag_piece()
+                    
+                #QUIT APPLICATIONS
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     sys.exit()

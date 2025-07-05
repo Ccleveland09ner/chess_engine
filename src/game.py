@@ -1,4 +1,4 @@
-import pygame #type: ignore
+import pygame
 from board import *
 from const import *
 from dragger import *
